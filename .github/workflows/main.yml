@@ -2,6 +2,14 @@ name: GHA mainワークフロー
 
 on:
   workflow_dispatch:
+    inputs:
+      env:
+        description: "環境を選んでください。"
+        type: choice
+        options:
+          - prd
+          - stg
+          - dev
 
 env:
   GITHUB_TARGET_REPOSITORY: hello-gha-sub
@@ -21,7 +29,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/${{ github.repository_owner }}/${{ env.GITHUB_TARGET_REPOSITORY }}/dispatches \
-            -d '{"event_type":"test_result","client_payload":{"passed":false,"message":"Error: timeout","env":"stg"}}'
+            -d '{"event_type":"test_result","client_payload":{"passed":false,"message":"Error: timeout","env":${{ inputs.env }}}}'
       - name: GHA mainワークフローを終了
         run: |
           echo "main ended."
